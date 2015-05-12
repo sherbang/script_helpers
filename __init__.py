@@ -1,3 +1,7 @@
+import os
+import sys
+
+
 def get_app_directory():
     """Return the directory that contains the application.
     This is the directory of the .py file in most cases, but is the directory
