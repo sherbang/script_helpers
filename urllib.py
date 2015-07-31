@@ -11,7 +11,7 @@ import urllib.parse
 logger = logging.getLogger('sherbang.script_helpers')
 
 
-class FileExistsExeption(Exception):
+class FileExistsException(Exception):
     def __init__(self, filename):
         super().__init__('{} already exists'.format(filename))
         self.filename = filename
@@ -41,7 +41,7 @@ def download_file(url, output_dir=None, overwrite=False):
     Download the file from `url` and save it locally under `output_dir`.
 
     If overwrite is True then existing files matching the same filename will
-    be overwritten, otherwise a FileExistsExeption will be raised.
+    be overwritten, otherwise a FileExistsException will be raised.
     """
     with urllib.request.urlopen(url) as response:
         file_name = get_filename(response)
@@ -49,7 +49,7 @@ def download_file(url, output_dir=None, overwrite=False):
             file_name = os.path.join(output_dir, file_name)
 
         if overwrite is not True and os.path.exists(file_name):
-            exc = FileExistsExeption(
+            exc = FileExistsException(
                 'File already exists: "{}"'.format(file_name))
             exc.filename = file_name
             raise exc
