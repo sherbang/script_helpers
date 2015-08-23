@@ -6,6 +6,7 @@ import os
 import posixpath
 import urllib.request
 import shutil
+from urllib.parse import parse_qs
 import urllib.parse
 
 logger = logging.getLogger('sherbang.script_helpers')
@@ -25,11 +26,19 @@ def get_filename(urllib_response):
     """
     cd_header = urllib_response.headers.get('Content-Disposition', '')
     _, params = cgi.parse_header(cd_header)
+
+    split_url = urllib.parse.urlsplit(urllib_response.geturl())
+
     if 'filename' in params:
-        filename = params['filename']
+        path = params['filename']
+    elif split_url.query and 'file' in parse_qs(split_url.query):
+        path = parse_qs(split_url.query)['file'][0]
+    elif split_url.query and 'filename' in parse_qs(split_url.query):
+        path = parse_qs(split_url.query)['filename'][0]
     else:
-        path = urllib.parse.urlsplit(urllib_response.geturl()).path
-        filename = posixpath.basename(path)
+        path = split_url.path
+
+    filename = posixpath.basename(path)
 
     filename = secure_filename(filename)
 
